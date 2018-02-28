@@ -1,0 +1,8 @@
+= Chapter 2 notes
+
+In this chapter we focus on implementing echo server and client using Netty library.
+The main goal is to show that a single threaded server application can handle multiple connections
+at the same time.
+
+
+
