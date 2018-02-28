@@ -1,3 +1,5 @@
+:sourcedir: src/main/java
+
 = Chapter 2 notes
 
 In this chapter we focus on implementing echo server and client using Netty library.
@@ -5,4 +7,9 @@ The main goal is to show that a single threaded server application can handle mu
 at the same time.
 
 
+[source,java]
+----
+include::{sourcedir}/com/github/wololock/netty/echo/EchoServerHandler.java[lines=15..19]
+----
+<1> we simply write incoming message to console
 
