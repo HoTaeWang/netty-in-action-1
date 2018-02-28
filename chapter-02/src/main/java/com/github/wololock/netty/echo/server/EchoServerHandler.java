@@ -1,4 +1,4 @@
-package com.github.wololock.netty.echo;
+package com.github.wololock.netty.echo.server;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
