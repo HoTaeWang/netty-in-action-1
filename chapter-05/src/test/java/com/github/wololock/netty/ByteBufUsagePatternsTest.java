@@ -1,6 +1,7 @@
 package com.github.wololock.netty;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.Unpooled;
 import org.junit.Test;
 
@@ -63,5 +64,28 @@ public class ByteBufUsagePatternsTest {
     message2.flip();
 
     System.out.println(message2.toString());
+  }
+
+  @Test
+  public void compositePatternWithByteBuf() {
+    final String headerText = "Content-Type: application/json";
+    final String bodyText = "{\"test\": 2}";
+
+    final CompositeByteBuf messageBuf = Unpooled.compositeBuffer();
+    final ByteBuf header = Unpooled.copiedBuffer(headerText, Charset.forName("UTF-8"));
+    final ByteBuf body = Unpooled.copiedBuffer(bodyText, Charset.forName("UTF-8"));
+
+    messageBuf.addComponents(header, body);
+
+    messageBuf.forEach(buf -> {
+      System.out.println(buf.toString());
+    });
+
+    // Accessing the data
+    int length = messageBuf.readableBytes();
+    byte[] array = new byte[length];
+    messageBuf.getBytes(messageBuf.readerIndex(), array);
+
+    System.out.println(Arrays.toString(array));
   }
 }
