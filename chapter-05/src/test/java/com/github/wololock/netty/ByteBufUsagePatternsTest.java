@@ -23,4 +23,21 @@ public class ByteBufUsagePatternsTest {
       System.out.println("length: " + length);
     }
   }
+
+  @Test
+  public void directBuffers() {
+    ByteBuf directBuf = Unpooled.directBuffer(16);
+    directBuf.writeInt(1);
+    directBuf.writeByte(1);
+
+    if (!directBuf.hasArray()) {
+
+      int length = directBuf.readableBytes();
+      byte[] array = new byte[length];
+      directBuf.getBytes(directBuf.readerIndex(), array);
+
+      System.out.println("bytes array: " + Arrays.toString(array));
+      System.out.println("length: " + length);
+    }
+  }
 }
