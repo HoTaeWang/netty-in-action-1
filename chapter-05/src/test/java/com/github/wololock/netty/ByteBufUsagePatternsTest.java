@@ -88,4 +88,14 @@ public class ByteBufUsagePatternsTest {
 
     System.out.println(Arrays.toString(array));
   }
+
+  @Test
+  public void randomAccessExample() {
+    final ByteBuf buf = Unpooled.copiedBuffer("Test", Charset.forName("UTF-8"));
+
+    for (int i = 0; i < buf.capacity(); i++) {
+      byte b = buf.getByte(i);
+      System.out.println((char) b);
+    }
+  }
 }
