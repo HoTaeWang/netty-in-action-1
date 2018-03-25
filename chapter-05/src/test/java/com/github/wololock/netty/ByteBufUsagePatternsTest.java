@@ -98,4 +98,22 @@ public class ByteBufUsagePatternsTest {
       System.out.println((char) b);
     }
   }
+
+  @Test
+  public void sequentialAccessIndexing() {
+    final ByteBuf buf = Unpooled.copiedBuffer("Lorem ipsum", Charset.forName("UTF-8"));
+
+    System.out.println("readable bytes: " + buf.readableBytes());
+    System.out.println("writable bytes: " + buf.writableBytes());
+    System.out.println("bytes read: " + buf.readerIndex());
+
+    while (buf.isReadable()) {
+      char character = (char) buf.readByte();
+      int readableBytes = buf.readableBytes();
+      int writableBytes = buf.writableBytes();
+      int bytesRead = buf.readerIndex();
+
+      System.out.printf("%s (readable bytes: %d, writable bytes: %d, bytes read: %d)\n", character, readableBytes, writableBytes, bytesRead);
+    }
+  }
 }
