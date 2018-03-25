@@ -164,5 +164,30 @@ public class ByteBufUsagePatternsTest {
     assertThat(result).isEqualTo(expected);
   }
 
+  @Test
+  public void derivedBuffer() {
+    // Create buffer with 5 ints and read 2 first values
+    final ByteBuf buffer = Unpooled.copyInt(1,2,3,4,5);
+    buffer.readInt();
+    buffer.readInt();
 
+    assertThat(buffer.readInt()).isEqualTo(3);
+
+    // Derive the buffer and reset reader index to 0
+    final ByteBuf derived = buffer.duplicate();
+    derived.readerIndex(0);
+
+    // Read the first int from derived view
+    assertThat(derived.readInt()).isEqualTo(1);
+
+    // Continue reading ints from the initial buffer
+    assertThat(buffer.readInt()).isEqualTo(4);
+
+    // Now let's move writer index to fifth integer array element (4 bytes per integer - 4*4=16) in derived buffer
+    derived.writerIndex(16);
+    derived.writeInt(7);
+
+    // Initial buffer got updated by the derived view
+    assertThat(buffer.readInt()).isEqualTo(7);
+  }
 }
