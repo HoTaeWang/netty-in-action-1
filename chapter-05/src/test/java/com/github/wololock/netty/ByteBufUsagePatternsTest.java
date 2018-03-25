@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Random;
 
 public class ByteBufUsagePatternsTest {
 
@@ -114,6 +115,20 @@ public class ByteBufUsagePatternsTest {
       int bytesRead = buf.readerIndex();
 
       System.out.printf("%s (readable bytes: %d, writable bytes: %d, bytes read: %d)\n", character, readableBytes, writableBytes, bytesRead);
+    }
+  }
+
+  @Test
+  public void writeRandomInts() {
+    final ByteBuf buf = Unpooled.buffer(16, 16);
+    final Random random = new Random();
+
+    while (buf.writableBytes() >= 4) {
+      buf.writeInt(random.nextInt(100));
+    }
+
+    while (buf.isReadable()) {
+      System.out.println(buf.readInt());
     }
   }
 }
