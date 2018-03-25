@@ -1,8 +1,6 @@
 package com.github.wololock.netty;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.CompositeByteBuf;
-import io.netty.buffer.Unpooled;
+import io.netty.buffer.*;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
@@ -11,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -189,5 +189,35 @@ public class ByteBufUsagePatternsTest {
 
     // Initial buffer got updated by the derived view
     assertThat(buffer.readInt()).isEqualTo(7);
+  }
+
+  @Test
+  public void pooledByteBufInitializationExample() {
+    //given:
+    final ByteBuf buffer = PooledByteBufAllocator.DEFAULT.heapBuffer(0, 16);
+    final Random random  = new Random();
+
+    IntStream.range(0, 4).forEach(n -> buffer.writeInt(random.nextInt(100)));
+
+    //when:
+    final List<Integer> result = IntStream.range(0, 4).boxed().map(n -> buffer.readInt()).collect(Collectors.toList());
+
+    //then:
+    assertThat(result).hasSize(4);
+    //and:
+    assertThat(result).allMatch(n -> n >= 0);
+    //and:
+    assertThat(result).allMatch(n -> n < 100);
+  }
+
+  @Test
+  public void byteBufUtils() {
+    final ByteBuf buffer = Unpooled.copiedBuffer("Lorem ipsum", Charset.forName("UTF-8"));
+
+    assertThat(ByteBufUtil.hexDump(buffer)).isEqualTo("4c6f72656d20697073756d");
+
+    assertThat(ByteBufUtil.equals(buffer, buffer.copy())).isTrue();
+
+    assertThat(ByteBufUtil.equals(buffer, Unpooled.copiedBuffer("Lorem ipsum", Charset.forName("UTF-8")))).isTrue();
   }
 }
