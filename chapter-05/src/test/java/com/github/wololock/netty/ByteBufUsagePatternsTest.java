@@ -7,8 +7,12 @@ import org.junit.Test;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ByteBufUsagePatternsTest {
 
@@ -131,4 +135,34 @@ public class ByteBufUsagePatternsTest {
       System.out.println(buf.readInt());
     }
   }
+
+  @Test
+  public void readerIndexManagement() {
+    //given:
+    final ByteBuf buffer = Unpooled.copyInt(1,2,3,4,5,6);
+    final List<Integer> result = new ArrayList<>();
+    final List<Integer> expected = Arrays.asList(1,2,3,4,5,6,4,5,6);
+
+    //when:
+    result.add(buffer.readInt());
+    result.add(buffer.readInt());
+    result.add(buffer.readInt());
+
+    buffer.markReaderIndex();
+
+    result.add(buffer.readInt());
+    result.add(buffer.readInt());
+    result.add(buffer.readInt());
+
+    buffer.resetReaderIndex();
+
+    result.add(buffer.readInt());
+    result.add(buffer.readInt());
+    result.add(buffer.readInt());
+
+    //then:
+    assertThat(result).isEqualTo(expected);
+  }
+
+
 }
